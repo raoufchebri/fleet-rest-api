@@ -15,14 +15,8 @@ module.exports.create = (event, context, callback) => {
   const maxLat = 47.431388
   const minLon = 6.121452
   const maxLon = 10.384751
-  const minOdometer = 2000
-  const maxOdometer = 200000
-  const minFuel = 30.0
-  const maxFuel = 70.0
-  const minBattery = 10.0
-  const maxBattery = 15.0
   
-  const { name, vin, make, model, year, fuelType, type } = JSON.parse(event.body);
+  const { name, vin, make, model, year, fuelType, type, odometer, fuel, battery } = JSON.parse(event.body);
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
@@ -36,9 +30,9 @@ module.exports.create = (event, context, callback) => {
         lat: random(minLat, maxLat),
         lon: random(minLon, maxLon)
       },
-      odometer: random(minOdometer, maxOdometer),
-      fuel: random(minFuel, maxFuel),
-      battery : random(minBattery, maxBattery)
+      odometer,
+      fuel,
+      battery
     },
   };
 
@@ -58,6 +52,11 @@ module.exports.create = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+      },
       body: JSON.stringify(params.Item),
     };
     callback(null, response);
