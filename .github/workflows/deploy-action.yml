@@ -8,8 +8,15 @@ jobs:
     name: deploy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - run: npm ci
+    - uses: workflows/checkout@master
+    - name: before install
+      run: echo before install
+    - name: npm install
+      uses: actions/npm@master
+      with:
+        args: install
+    - name: before install
+      run: echo finished install
     - name: serverless deploy
       uses: serverless/github-action@master
       with:
