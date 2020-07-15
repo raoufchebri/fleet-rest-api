@@ -2,21 +2,14 @@ on:
   push:
     branches:
       - master
-name: Serverless deploy master branch
+name: Deploy master branch
 jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
     steps:
-    - uses: workflows/checkout@master
-    - name: before install
-      run: echo before install
-    - name: npm install
-      uses: actions/npm@master
-      with:
-        args: install
-    - name: before install
-      run: echo finished install
+    - uses: actions/checkout@master
+    - run: npm ci
     - name: serverless deploy
       uses: serverless/github-action@master
       with:
