@@ -11,12 +11,13 @@ function random(min, max) {
 
 module.exports.create = (event, context, callback) => {
   
+  // Simulate GPS coord in Switzerland
   const minLat = 46.092000
   const maxLat = 47.431388
   const minLon = 6.121452
   const maxLon = 10.384751
   
-  const { name, vin, make, model, year, fuelType, type, odometer, fuel, battery } = JSON.parse(event.body);
+  const { name, vin, make, model, year, fuelType, type, odometer} = JSON.parse(event.body);
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
@@ -31,12 +32,11 @@ module.exports.create = (event, context, callback) => {
         lon: random(minLon, maxLon)
       },
       odometer,
-      fuel,
-      battery
+      fuel: random(1, 99),
+      battery: random(1, 99)
     },
   };
 
-  // write the todo to the database
   dynamoDb.put(params, (error) => {
     // handle potential errors
     if (error) {
