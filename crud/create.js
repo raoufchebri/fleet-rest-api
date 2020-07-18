@@ -9,6 +9,7 @@ function random(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+// Create function
 module.exports.create = (event, context, callback) => {
   
   // Simulate GPS coord in Switzerland
