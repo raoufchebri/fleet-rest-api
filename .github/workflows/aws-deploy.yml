@@ -1,24 +1,28 @@
-name: deploy to lambda
-on: [push]
-jobs:
-  deploy_source:
-    name: build and deploy lambda
-    strategy:
-      matrix:
-        node-version: [12.x]
+--- 
+jobs: 
+  deploy_source: 
+    name: "build and deploy lambda"
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - run: npm ci
-      - name: serverless deploy
-        uses: serverless/github-action@master
-        with:
+    steps: 
+      - 
+        uses: actions/checkout@master
+      - 
+        run: "npm ci"
+      - 
+        AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         args: deploy
-        env:
-        # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        # or if using AWS creds directly
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env: ~
+        name: "serverless deploy"
+        uses: serverless/github-action@master
+        with: ~
+    strategy: 
+      matrix: 
+        node-version: 
+          - 12.x
+name: "deploy to lambda"
+true: 
+  - push
       # - uses: actions/checkout@v1
       # - name: Use Node.js ${{ matrix.node-version }}
       #   uses: actions/setup-node@v1
