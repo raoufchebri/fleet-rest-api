@@ -43,8 +43,8 @@ module.exports.create = (event, context, callback) => {
         lon: utils.random(minLon, maxLon)
       },
       odometer,
-      fuel: random(1, 99),
-      battery: random(1, 99)
+      fuel: utils.random(1, 99),
+      battery: utils.random(1, 99)
     },
   };
 
