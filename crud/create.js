@@ -12,6 +12,7 @@ function random(min, max) {
 // Create function
 module.exports.create = (event, context, callback) => {
   
+  console.log("Adding car to fleet ...");
   // Simulate GPS coord in Switzerland
   const minLat = 46.092000
   const maxLat = 47.431388
