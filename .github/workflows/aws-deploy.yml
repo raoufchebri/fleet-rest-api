@@ -1,18 +1,33 @@
 name: deploy to lambda
 on: [push]
 jobs:
-
   deploy_source:
-    name: deploy lambda from source
+    name: build and deploy lambda
+    strategy:
+      matrix:
+        node-version: [12.x]
     runs-on: ubuntu-latest
     steps:
-      - name: checkout source code
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install and build
+        run: |
+          npm ci
+          npm run build --if-present
+        env:
+          CI: true
+      - name: zip
+        uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ./bundle.zip ./
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ${{ secrets.AWS_REGION }}
-          function_name: crud
-          source: crud/create.js
+          aws_region: eu-west-3
+          function_name: fleet-rest-api
+          zip_file: bundle.zip
