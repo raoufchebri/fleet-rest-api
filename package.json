@@ -8,9 +8,11 @@
     "uuid": "^2.0.3"
   },
   "scripts": {
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "test": "jest"
   },
   "devDependencies": {
+    "jest": "^26.1.0",
     "serverless": "1.74.1"
   }
 }

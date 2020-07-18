@@ -2,12 +2,9 @@
 
 const uuid = require('uuid');
 const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
+const utils = require('../utils/utils')
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-function random(min, max) {
-  return Math.random() * (max - min) + min;
-}
 
 // Create function
 module.exports.create = (event, context, callback) => {
@@ -19,7 +16,19 @@ module.exports.create = (event, context, callback) => {
   const minLon = 6.121452
   const maxLon = 10.384751
   
-  const { name, vin, make, model, year, fuelType, type, odometer} = JSON.parse(event.body);  
+  const car = JSON.parse(event.body);  
+  
+  if (!utils.isValidCar(car)) {
+    console.error('Validation Failed');
+    callback(null, {
+      statusCode: 400,
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'Couldn\'t create the todo item.',
+    });
+    return 400;
+  }
+  
+  const { name, vin, make, model, year, fuelType, type, odometer} = car
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {
@@ -30,8 +39,8 @@ module.exports.create = (event, context, callback) => {
       model, year, fuelType,
       type,
       position: {
-        lat: random(minLat, maxLat),
-        lon: random(minLon, maxLon)
+        lat: utils.random(minLat, maxLat),
+        lon: utils.random(minLon, maxLon)
       },
       odometer,
       fuel: random(1, 99),
@@ -48,7 +57,7 @@ module.exports.create = (event, context, callback) => {
         headers: { 'Content-Type': 'text/plain' },
         body: 'Couldn\'t create the todo item.',
       });
-      return;
+      return 501;
     }
 
     // create a response
@@ -63,4 +72,7 @@ module.exports.create = (event, context, callback) => {
     };
     callback(null, response);
   });
+
+  return 200
+
 };
