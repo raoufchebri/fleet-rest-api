@@ -1,10 +1,6 @@
 name: Deploy Lambda
 
-on:
-  push:
-    types: [closed]
-      branches:
-        - master
+on: [push]
 
 jobs:
   deploy-lambda:
