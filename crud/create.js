@@ -18,6 +18,7 @@ module.exports.create = (event, context, callback) => {
   const maxLon = 10.384751
   
   const { name, vin, make, model, year, fuelType, type, odometer} = JSON.parse(event.body);
+  
   const params = {
     TableName: process.env.DYNAMODB_TABLE,
     Item: {

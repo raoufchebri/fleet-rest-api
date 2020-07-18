@@ -9,6 +9,7 @@ provider:
   region: eu-west-3
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    UPLOAD_BUCKET: fleetcenter-uploads
   iamRoleStatements:
     - Effect: Allow
       Action:
