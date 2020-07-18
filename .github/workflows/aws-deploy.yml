@@ -1,68 +1,54 @@
-on:
-  push:
-    branches:
-      - master
-name: Deploy master branch
+name: deploy to lambda
+on: [push]
 jobs:
-  deploy:
-    name: deploy
+  deploy_source:
+    name: build and deploy lambda
+    strategy:
+      matrix:
+        node-version: [12.x]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: npm install
-      uses: actions/npm@master
-      with:
-        args: install
-    - name: serverless deploy
-      uses: serverless/github-action@master
-      with:
+      - uses: actions/checkout@master
+      - run: npm ci
+      - name: serverless deploy
+        uses: serverless/github-action@master
+        with:
         args: deploy
-      env:
-        # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        # or if using AWS creds directly
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
-# name: deploy to lambda
-# on: [push]
-# jobs:
-#   deploy_source:
-#     name: build and deploy lambda
-#     strategy:
-#       matrix:
-#         node-version: [12.x]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v1
-#       - name: Use Node.js ${{ matrix.node-version }}
-#         uses: actions/setup-node@v1
-#         with:
-#           node-version: ${{ matrix.node-version }}
-#       - name: npm install and build
-#         run: |
-#           npm install
-#           npm ci
-#           npm run build --if-present
-#         env:
-#           CI: true
-#       - name: zip
-#         uses: montudor/action-zip@v0.1.0
-#         with:
-#           args: zip -qq -r ./bundle.zip ./
-#       - name: deploy create
-#         uses: appleboy/lambda-action@master
-#         with:
-#           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws_region: eu-west-3
-#           functions:
-#           function_name: fleet-rest-api-dev-create
-#           zip_file: bundle.zip
-#       - name: deploy list
-#         uses: appleboy/lambda-action@master
-#         with:
-#           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws_region: eu-west-3
-#           function_name: fleet-rest-api-dev-list
-#           zip_file: bundle.zip
+        env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          or if using AWS creds directly
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - uses: actions/checkout@v1
+      # - name: Use Node.js ${{ matrix.node-version }}
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
+      # - name: npm install and build
+      #   run: |
+      #     npm install
+      #     npm ci
+      #     npm run build --if-present
+      #   env:
+      #     CI: true
+      # - name: zip
+      #   uses: montudor/action-zip@v0.1.0
+      #   with:
+      #     args: zip -qq -r ./bundle.zip ./
+      # - name: deploy create
+      #   uses: appleboy/lambda-action@master
+      #   with:
+      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws_region: eu-west-3
+      #     functions:
+      #     function_name: fleet-rest-api-dev-create
+      #     zip_file: bundle.zip
+      # - name: deploy list
+      #   uses: appleboy/lambda-action@master
+      #   with:
+      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws_region: eu-west-3
+      #     function_name: fleet-rest-api-dev-list
+      #     zip_file: bundle.zip
